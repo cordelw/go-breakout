@@ -12,6 +12,7 @@ type Game struct {
 	Window       *sdl.Window
 	Renderer     *sdl.Renderer
 	Active       bool
+	LastMouse    Mouse
 	Mouse        Mouse
 	Clock        Clock
 	Paddle       Paddle
@@ -19,6 +20,8 @@ type Game struct {
 }
 
 func (g *Game) Init(windowWidth, windowHeight int32) {
+	g.WindowWidth, g.WindowHeight = windowWidth, windowHeight
+
 	/* Initialize SDL and SDL subsystems */
 	var err error
 
@@ -68,7 +71,8 @@ func (g *Game) Quit() {
 func (g *Game) Update() {
 	// Update gamestate
 	g.HandleInput()
-	g.Ball.Update(g.WindowWidth, g.WindowHeight, g.Paddle, g.Clock.DeltaTime)
+	//g.Ball.Update(g.WindowWidth, g.WindowHeight, g.Paddle, g.Clock.DeltaTime)
+	g.updateBall()
 
 	// Draw
 	g.Draw()
