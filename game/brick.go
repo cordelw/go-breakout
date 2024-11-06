@@ -80,11 +80,7 @@ func (g *Game) InitBricks() {
 	}
 }
 
-func (g *Game) removeBrick(index int) {
-	g.Bricks[index] = g.Bricks[len(g.Bricks)-1]
-	g.Bricks = g.Bricks[:len(g.Bricks)-1]
-}
-
+// TODO: FIX THE FUCKED UP COLLISIONS AND ALSO
 func (g *Game) updateBricks() {
 	ball := &g.Ball
 

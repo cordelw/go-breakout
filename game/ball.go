@@ -28,6 +28,7 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 	DrawCircle(renderer, int(b.PosX), int(b.PosY), b.Radius)
 }
 
+// TODO: Fix ball redirection to match classic atari breakout
 func (g *Game) updateBall() {
 	b := &g.Ball
 
