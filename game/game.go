@@ -12,11 +12,13 @@ type Game struct {
 	Window       *sdl.Window
 	Renderer     *sdl.Renderer
 	Active       bool
-	LastMouse    Mouse
 	Mouse        Mouse
+	LastMouse    Mouse
 	Clock        Clock
+	Stage        int
 	Paddle       Paddle
 	Ball         Ball
+	Bricks       []Brick
 }
 
 func (g *Game) Init(windowWidth, windowHeight int32) {
@@ -48,6 +50,8 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	// Game objects
 	g.Paddle.Init(windowWidth, windowHeight)
 	g.Ball.Init(windowHeight, g.Paddle.PosX)
+	g.Stage = 1
+	g.InitBricks()
 
 	// Clock
 	g.Clock.Init()
@@ -71,8 +75,10 @@ func (g *Game) Quit() {
 func (g *Game) Update() {
 	// Update gamestate
 	g.HandleInput()
-	//g.Ball.Update(g.WindowWidth, g.WindowHeight, g.Paddle, g.Clock.DeltaTime)
+
+	// Physics and collision checks
 	g.updateBall()
+	g.updateBricks()
 
 	// Draw
 	g.Draw()

@@ -28,12 +28,13 @@ func (g *Game) HandleInput() {
 		// Release ball if lmb clicked while currently held
 		case *sdl.MouseButtonEvent:
 			if et.Button == sdl.BUTTON_LEFT && g.Ball.Held {
-				g.Ball.VelX = -math.Min(float64(et.X-g.Mouse.PosX)*100, 0.3)
-				g.Ball.VelY = -0.3
+				g.Ball.VelX = -math.Min(float64(et.X-g.Mouse.PosX)*100, g.Ball.Speed)
+				g.Ball.VelY = -g.Ball.Speed
 				g.Ball.Held = false
 			}
 		}
 
+		// Update Mouse trackage
 		g.LastMouse = g.Mouse
 		g.Mouse.PosX, g.Mouse.PosY, g.Mouse.State = sdl.GetMouseState()
 	}

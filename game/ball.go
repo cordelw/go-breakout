@@ -9,6 +9,7 @@ import (
 type Ball struct {
 	PosX, PosY float64
 	VelX, VelY float64
+	Speed      float64
 	Radius     int
 	Held       bool
 }
@@ -17,6 +18,7 @@ func (b *Ball) Init(windowHeight int32, posX float64) {
 	b.Radius = int(windowHeight) / 48
 	b.PosY = float64(windowHeight-(windowHeight/8)) - float64(b.Radius+b.Radius/2)
 	b.PosX = posX
+	b.Speed = 0.3
 
 	b.Held = true
 }
@@ -26,21 +28,20 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 	DrawCircle(renderer, int(b.PosX), int(b.PosY), b.Radius)
 }
 
-const maxBallVelocity = 0.3
-
 func (g *Game) updateBall() {
 	b := &g.Ball
 
 	// Held by player before being released
 	// Follow player paddle
 	if b.Held {
+		b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
 		b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
 		return
 	}
 
 	// Fix Horizontal Velocity
-	if b.VelX > maxBallVelocity {
-		b.VelX = maxBallVelocity
+	if b.VelX > b.Speed {
+		b.VelX = b.Speed
 	}
 
 	// Update position
@@ -63,12 +64,16 @@ func (g *Game) updateBall() {
 		b.PosY = 0 + float64(b.Radius)
 		b.VelY = -b.VelY
 	}
+	// Bottom
+	if b.PosY > float64(g.WindowHeight) {
+		b.Held = true
+	}
 
 	// Player paddle collisions
 	// Check horizontal
 	if b.PosX >= g.Paddle.PosX && b.PosX <= g.Paddle.PosX+float64(g.Paddle.Width) {
 		// Check vertical
-		if b.PosY+float64(b.Radius) > g.Paddle.PosY && b.PosY-float64(b.Radius) < g.Paddle.PosY {
+		if b.PosY+float64(b.Radius) > g.Paddle.PosY && b.PosY < g.Paddle.PosY {
 			b.PosY = g.Paddle.PosY - float64(b.Radius)
 			b.VelY = -b.VelY
 			b.VelX = -math.Min(float64(g.LastMouse.PosX-g.Mouse.PosX)*100, 0.3)

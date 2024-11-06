@@ -7,6 +7,11 @@ func (g *Game) Draw() {
 	g.Renderer.SetDrawColor(24, 24, 24, 255)
 	g.Renderer.Clear()
 
+	// Draw Bricks
+	for _, b := range g.Bricks {
+		b.Draw(g.Renderer)
+	}
+
 	// Draw paddle and ball(s)
 	g.Paddle.Draw(g.Renderer)
 	g.Ball.Draw(g.Renderer)
