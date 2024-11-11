@@ -28,7 +28,17 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 	DrawCircle(renderer, int(b.PosX), int(b.PosY), b.Radius)
 }
 
-// TODO: Fix ball redirection to match classic atari breakout
+func (b *Ball) RectCollide(dt, rPosX, rPosY, rWidth, rHeight float64) {
+	// Get next ball position, then check for collisions based on this,
+	// Clamp positions, and then reverse
+
+	/*
+		var testPosX, testPosY float64
+		nextPosX := b.PosX + (b.VelX * dt)
+		nextPosY := b.PosY + (b.VelY * dt)
+	*/
+}
+
 func (g *Game) updateBall() {
 	b := &g.Ball
 
@@ -72,13 +82,21 @@ func (g *Game) updateBall() {
 
 	// Player paddle collisions
 	// Check horizontal
+
 	if b.PosX >= g.Paddle.PosX && b.PosX <= g.Paddle.PosX+float64(g.Paddle.Width) {
 		// Check vertical
 		if b.PosY+float64(b.Radius) > g.Paddle.PosY && b.PosY < g.Paddle.PosY {
 			b.PosY = g.Paddle.PosY - float64(b.Radius)
 			b.VelY = -b.VelY
-			b.VelX = -math.Min(float64(g.LastMouse.PosX-g.Mouse.PosX)*100, 0.3)
+
+			dir := float64(g.LastMouse.PosX - g.Mouse.PosX)
+			if dir != 0 {
+				b.VelX = -math.Min(dir*10, 0.3)
+			}
 		}
 	}
 
+	// Updated paddle collide
+	//p := g.Paddle
+	//b.CheckCollision(p.PosX, p.PosY, p.Width, p.Height)
 }

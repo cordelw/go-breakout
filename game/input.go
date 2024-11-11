@@ -2,6 +2,7 @@ package game
 
 import (
 	"math"
+	"math/rand"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -11,7 +12,6 @@ type Mouse struct {
 	State      uint32
 }
 
-// Something
 func (g *Game) HandleInput() {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch et := event.(type) {
@@ -28,9 +28,19 @@ func (g *Game) HandleInput() {
 		// Release ball if lmb clicked while currently held
 		case *sdl.MouseButtonEvent:
 			if et.Button == sdl.BUTTON_LEFT && g.Ball.Held {
-				g.Ball.VelX = -math.Min(float64(et.X-g.Mouse.PosX)*100, g.Ball.Speed)
 				g.Ball.VelY = -g.Ball.Speed
 				g.Ball.Held = false
+
+				dir := float64(et.X - g.Mouse.PosX)
+				if dir != 0 {
+					g.Ball.VelX = -math.Min(dir*10, g.Ball.Speed)
+				} else {
+					if rand.Float32() < 0.5 {
+						g.Ball.VelX = -g.Ball.Speed
+					} else {
+						g.Ball.VelX = g.Ball.Speed
+					}
+				}
 			}
 		}
 

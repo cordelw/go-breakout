@@ -48,7 +48,7 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 
 	/* Initialize Game Parameters */
 	// Game objects
-	g.Paddle.Init(windowWidth, windowHeight)
+	g.Paddle.Init(float64(windowWidth), float64(windowHeight))
 	g.Ball.Init(windowHeight, g.Paddle.PosX)
 	g.Stage = 1
 	g.InitBricks()
@@ -63,7 +63,7 @@ func (g *Game) SetWindowSize(windowWidth, windowHeight int32) {
 		windowWidth, windowHeight,
 	)
 
-	g.Paddle.Init(windowWidth, windowHeight)
+	g.Paddle.Init(float64(windowWidth), float64(windowHeight))
 }
 
 func (g *Game) Quit() {

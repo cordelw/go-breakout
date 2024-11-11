@@ -48,7 +48,9 @@ func (g *Game) InitBricks() {
 	brickHeight := float64(g.WindowHeight / 24)
 
 	switch g.Stage {
-	case 0: // First stage
+	case 0:
+		break
+	case 1: // First stage
 		// Single layer of bricks
 		Y := float64(g.WindowHeight / 3)
 		for l := 0; l < 2; l++ {
@@ -63,7 +65,7 @@ func (g *Game) InitBricks() {
 				})
 			}
 		}
-	case 1: // Second stage
+	case 2: // Second stage
 		Y := float64(g.WindowHeight / 3)
 		for l := 0; l < 3; l++ {
 			for i := 0; i < 11; i++ {
