@@ -78,7 +78,10 @@ func (g *Game) Update() {
 
 	// Physics and collision checks
 	g.updateBall()
-	g.updateBricks()
+	for i := range g.Bricks {
+		g.Ball.BrickCollide(g.Clock.DeltaTime, &g.Bricks[i])
+	}
+	//g.updateBricks()
 
 	// Draw
 	g.Draw()

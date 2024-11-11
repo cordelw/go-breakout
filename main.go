@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/cordelw/go-breakout/game"
 )
 
@@ -13,7 +11,5 @@ func main() {
 
 	for game.Active {
 		game.Update()
-
-		fmt.Println(game.Clock.DeltaTime)
 	}
 }

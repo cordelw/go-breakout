@@ -28,15 +28,19 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 	DrawCircle(renderer, int(b.PosX), int(b.PosY), b.Radius)
 }
 
-func (b *Ball) RectCollide(dt, rPosX, rPosY, rWidth, rHeight float64) {
-	// Get next ball position, then check for collisions based on this,
-	// Clamp positions, and then reverse
+func (b *Ball) BrickCollide(dt float64, brick *Brick) {
+	// Find where the ball will be next frame
+	bDeltaPosX := b.PosX + (b.VelX * dt)
+	//bDeltaPosY := b.PosY + (b.VelY * dt)
 
-	/*
-		var testPosX, testPosY float64
-		nextPosX := b.PosX + (b.VelX * dt)
-		nextPosY := b.PosY + (b.VelY * dt)
-	*/
+	// Only run precise collision checks if ball is inside the
+	// horizontal bounds of the brick
+	if bDeltaPosX-float64(b.Radius) > brick.PosX+brick.Width || bDeltaPosX+float64(b.Radius) < brick.PosX {
+		return
+	}
+
+	// Proper collision check
+	// TODO: THIS ^^^
 }
 
 func (g *Game) updateBall() {
@@ -45,8 +49,10 @@ func (g *Game) updateBall() {
 	// Held by player before being released
 	// Follow player paddle
 	if b.Held {
-		b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
-		b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
+		//b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
+		//b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
+		b.PosX = float64(g.Mouse.PosX)
+		b.PosY = float64(g.Mouse.PosY)
 		return
 	}
 
@@ -95,8 +101,4 @@ func (g *Game) updateBall() {
 			}
 		}
 	}
-
-	// Updated paddle collide
-	//p := g.Paddle
-	//b.CheckCollision(p.PosX, p.PosY, p.Width, p.Height)
 }
