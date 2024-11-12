@@ -28,7 +28,7 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 	DrawCircle(renderer, int(b.PosX), int(b.PosY), b.Radius)
 }
 
-func (b *Ball) BrickCollide(dt float64, brick *Brick) {
+func (b *Ball) BrickCollide(brick *Brick) {
 	// Do not check dead bricks
 	if brick.HP == 0 {
 		return
