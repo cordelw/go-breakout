@@ -42,6 +42,11 @@ func (g *Game) HandleInput() {
 					}
 				}
 			}
+
+		case *sdl.KeyboardEvent:
+			if et.Keysym.Scancode == sdl.SCANCODE_SPACE {
+				g.Ball.Held = true
+			}
 		}
 
 		// Update Mouse trackage

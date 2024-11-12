@@ -50,7 +50,7 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	// Game objects
 	g.Paddle.Init(float64(windowWidth), float64(windowHeight))
 	g.Ball.Init(windowHeight, g.Paddle.PosX)
-	g.Stage = 1
+	g.Stage = 2
 	g.InitBricks()
 
 	// Clock
@@ -81,7 +81,6 @@ func (g *Game) Update() {
 	for i := range g.Bricks {
 		g.Ball.BrickCollide(g.Clock.DeltaTime, &g.Bricks[i])
 	}
-	//g.updateBricks()
 
 	// Draw
 	g.Draw()

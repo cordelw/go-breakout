@@ -29,9 +29,14 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 }
 
 func (b *Ball) BrickCollide(dt float64, brick *Brick) {
+	// Do not check dead bricks
+	if brick.HP == 0 {
+		return
+	}
+
 	// Find where the ball will be next frame
-	bDeltaPosX := b.PosX + (b.VelX * dt)
-	//bDeltaPosY := b.PosY + (b.VelY * dt)
+	bDeltaPosX := b.PosX //+ (b.VelX * dt)
+	bDeltaPosY := b.PosY //+ (b.VelY * dt)
 
 	// Only run precise collision checks if ball is inside the
 	// horizontal bounds of the brick
@@ -40,7 +45,49 @@ func (b *Ball) BrickCollide(dt float64, brick *Brick) {
 	}
 
 	// Proper collision check
-	// TODO: THIS ^^^
+	nearestX := clamp(brick.PosX, brick.PosX+brick.Width, bDeltaPosX)
+	nearestY := clamp(brick.PosY, brick.PosY+brick.Height, bDeltaPosY)
+
+	distX := bDeltaPosX - nearestX
+	distY := bDeltaPosY - nearestY
+	dist := (distX * distX) + (distY * distY)
+
+	// Do nothing if distance is greater than
+	// circle radius
+	if dist > float64(b.Radius*b.Radius) {
+		return
+	}
+
+	// Collision response
+	radSqrt := math.Sqrt(dist)
+	normX := distX / radSqrt
+	normY := distY / radSqrt
+
+	// Reverse velocities accordingly
+	if normX != 0 && (b.VelX < 0) != (normX < 0) {
+		b.VelX = -b.VelX
+	}
+	if normY != 0 && (b.VelY < 0) != (normY < 0) {
+		b.VelY = -b.VelY
+	}
+
+	// Reposition Ball to where it hits
+	// the brick
+	if distX != 0 {
+		b.PosX = nearestX + (float64(b.Radius) * normX)
+	}
+	if distY != 0 {
+		b.PosY = nearestY + (float64(b.Radius) * normY)
+	}
+
+	// Damage brick if destructable
+	if brick.Destructable {
+		brick.HP -= 1
+	}
+}
+
+func clamp(min, max, value float64) float64 {
+	return math.Max(min, math.Min(max, value))
 }
 
 func (g *Game) updateBall() {
@@ -49,10 +96,10 @@ func (g *Game) updateBall() {
 	// Held by player before being released
 	// Follow player paddle
 	if b.Held {
-		//b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
-		//b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
-		b.PosX = float64(g.Mouse.PosX)
-		b.PosY = float64(g.Mouse.PosY)
+		b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
+		b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
+		//b.PosX = float64(g.Mouse.PosX)
+		//b.PosY = float64(g.Mouse.PosY)
 		return
 	}
 
@@ -97,7 +144,7 @@ func (g *Game) updateBall() {
 
 			dir := float64(g.LastMouse.PosX - g.Mouse.PosX)
 			if dir != 0 {
-				b.VelX = -math.Min(dir*10, 0.3)
+				b.VelX = -(math.Min(dir*10, 0.3))
 			}
 		}
 	}

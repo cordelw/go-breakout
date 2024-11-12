@@ -14,6 +14,8 @@ type Brick struct {
 func (b *Brick) Draw(renderer *sdl.Renderer) {
 	// Set color based on HP
 	switch b.HP {
+	case -1:
+		renderer.SetDrawColor(120, 120, 120, 255)
 	case 0:
 		// Invisible
 		renderer.SetDrawColor(24, 24, 24, 255)
@@ -50,7 +52,14 @@ func (g *Game) InitBricks() {
 
 	switch g.Stage {
 	case 0:
-		break
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: false,
+			HP:           -1,
+			PosX:         float64(g.WindowWidth/2) - (brickWidth / 2),
+			PosY:         float64(g.WindowHeight/2) - (brickHeight / 2),
+			Width:        brickWidth,
+			Height:       brickHeight,
+		})
 	case 1: // First stage
 		// Single layer of bricks
 		Y := float64(g.WindowHeight / 3)
@@ -78,54 +87,6 @@ func (g *Game) InitBricks() {
 					Width:        brickWidth,
 					Height:       brickHeight,
 				})
-			}
-		}
-	}
-}
-
-// TODO: FIX THE FUCKED UP COLLISIONS AND ALSO
-func (g *Game) updateBricks() {
-	ball := &g.Ball
-
-	// For every brick on field
-	for i, b := range g.Bricks {
-		// Don't update dead bricks
-		if b.HP == 0 {
-			continue
-		}
-
-		/* COLLISION CHECKS */
-		// Inside Horizontal column
-		if ball.PosX+float64(ball.Radius) > b.PosX && ball.PosX-float64(ball.Radius) < b.PosX+b.Width {
-			// Top
-			if ball.PosY+float64(ball.Radius) > b.PosY && ball.PosY < b.PosY+(b.Height/2) {
-				ball.PosY = b.PosY - float64(ball.Radius)
-				ball.VelY = -ball.VelY
-				g.Bricks[i].HP -= 1
-			}
-
-			// Bottom
-			if ball.PosY-float64(ball.Radius) < b.PosY+b.Height && ball.PosY > b.PosY+(b.Height/2) {
-				ball.PosY = b.PosY + b.Height + float64(ball.Radius)
-				ball.VelY = -ball.VelY
-				g.Bricks[i].HP -= 1
-			}
-		}
-
-		// Inside vertical column
-		if ball.PosY+float64(ball.Radius) > b.PosY && ball.PosY-float64(ball.Radius) < b.PosY+b.Height {
-			// Left
-			if ball.PosX+float64(ball.Radius) > b.PosX && ball.PosX < b.PosX+(b.Width/2) {
-				ball.PosX = b.PosX - float64(ball.Radius)
-				ball.VelX = -ball.VelX
-				g.Bricks[i].HP -= 1
-			}
-
-			// Right
-			if ball.PosX-float64(ball.Radius) < b.PosX+b.Width && ball.PosX > b.PosX+(b.Width/2) {
-				ball.PosX = b.PosX + b.Width + float64(ball.Radius)
-				ball.VelX = -ball.VelX
-				g.Bricks[i].HP -= 1
 			}
 		}
 	}
