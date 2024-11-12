@@ -6,7 +6,7 @@ import (
 
 func main() {
 	game := new(game.Game)
-	game.Init(320*2, 240*2)
+	game.Init(320, 240)
 	defer game.Quit()
 
 	for game.Active {
