@@ -16,6 +16,21 @@ func (g *Game) Draw() {
 	g.Paddle.Draw(g.Renderer)
 	g.Ball.Draw(g.Renderer)
 
+	// Render start text on stage 0
+	if g.Stage == 0 {
+		cbrick := g.Bricks[0]
+		g.Renderer.Copy(
+			g.textures["start"],
+			nil,
+			&sdl.Rect{
+				X: int32(cbrick.PosX),
+				Y: int32(cbrick.PosY),
+				W: int32(cbrick.Width),
+				H: int32(cbrick.Height),
+			},
+		)
+	}
+
 	// Present renderer
 	g.Renderer.Present()
 }

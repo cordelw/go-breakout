@@ -49,17 +49,23 @@ func (g *Game) InitBricks() {
 	brickWidth := float64(g.WindowWidth / 11)
 	brickHeight := float64(g.WindowHeight / 24)
 	g.Bricks = make([]Brick, 0)
+	g.brickCount = 0
 
 	switch g.Stage {
 	case 0:
+		w := float64(g.WindowWidth) / 4
+		h := float64(g.WindowHeight) / 8
+
 		g.Bricks = append(g.Bricks, Brick{
-			Destructable: false,
-			HP:           -1,
-			PosX:         float64(g.WindowWidth/2) - (brickWidth / 2),
-			PosY:         float64(g.WindowHeight/2) - (brickHeight / 2),
-			Width:        brickWidth,
-			Height:       brickHeight,
+			Destructable: true,
+			HP:           1,
+			PosX:         float64(g.WindowWidth/2) - (w / 2),
+			PosY:         float64(g.WindowHeight/2) - (h / 2),
+			Width:        w,
+			Height:       h,
 		})
+
+		g.brickCount = 1
 	case 1: // First stage
 		// Single layer of bricks
 		Y := float64(g.WindowHeight / 3)
@@ -73,6 +79,8 @@ func (g *Game) InitBricks() {
 					Width:        brickWidth,
 					Height:       brickHeight,
 				})
+
+				g.brickCount++
 			}
 		}
 	case 2: // Second stage
@@ -87,6 +95,8 @@ func (g *Game) InitBricks() {
 					Width:        brickWidth,
 					Height:       brickHeight,
 				})
+
+				g.brickCount++
 			}
 		}
 	}
