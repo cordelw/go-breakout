@@ -29,6 +29,14 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 }
 
 func (b *Ball) BrickCollide(brick *Brick) {
+	/*
+		Clamp function and sh:
+		https://www.youtube.com/watch?v=_xj8FyG-aac
+
+		Collision Resolution:
+		https://www.youtube.com/watch?v=be0WANYMH_k
+	*/
+
 	// Do not check dead bricks
 	if brick.HP == 0 {
 		return
@@ -60,6 +68,9 @@ func (b *Ball) BrickCollide(brick *Brick) {
 	normY := distY / radSqrt
 
 	// Reverse velocities accordingly
+	// Prevent buggy reversion by checking to see if
+	// the normals have the same sign as the velocity
+	// before reversing
 	if normX != 0 && (b.VelX < 0) != (normX < 0) {
 		b.VelX = -b.VelX
 	}
