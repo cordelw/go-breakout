@@ -34,22 +34,18 @@ func (b *Ball) BrickCollide(dt float64, brick *Brick) {
 		return
 	}
 
-	// Find where the ball will be next frame
-	bDeltaPosX := b.PosX //+ (b.VelX * dt)
-	bDeltaPosY := b.PosY //+ (b.VelY * dt)
-
 	// Only run precise collision checks if ball is inside the
 	// horizontal bounds of the brick
-	if bDeltaPosX-float64(b.Radius) > brick.PosX+brick.Width || bDeltaPosX+float64(b.Radius) < brick.PosX {
+	if b.PosX-float64(b.Radius) > brick.PosX+brick.Width || b.PosX+float64(b.Radius) < brick.PosX {
 		return
 	}
 
 	// Proper collision check
-	nearestX := clamp(brick.PosX, brick.PosX+brick.Width, bDeltaPosX)
-	nearestY := clamp(brick.PosY, brick.PosY+brick.Height, bDeltaPosY)
+	nearestX := clamp(brick.PosX, brick.PosX+brick.Width, b.PosX)
+	nearestY := clamp(brick.PosY, brick.PosY+brick.Height, b.PosY)
 
-	distX := bDeltaPosX - nearestX
-	distY := bDeltaPosY - nearestY
+	distX := b.PosX - nearestX
+	distY := b.PosY - nearestY
 	dist := (distX * distX) + (distY * distY)
 
 	// Do nothing if distance is greater than
