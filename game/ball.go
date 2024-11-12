@@ -46,6 +46,8 @@ func (g *Game) updateBall() {
 		b.VelX = b.Speed
 	}
 
+	// Adjust velocity for different
+	// screen sizes
 	h := float64(g.WindowWidth) / 440
 	v := float64(g.WindowHeight) / 330
 
@@ -58,19 +60,20 @@ func (g *Game) updateBall() {
 	if b.PosX-float64(b.Radius) < 0 {
 		b.PosX = 0 + float64(b.Radius)
 		b.VelX = -b.VelX
-	}
-	// Right
-	if b.PosX+float64(b.Radius) > float64(g.WindowWidth) {
+
+		// Right
+	} else if b.PosX+float64(b.Radius) > float64(g.WindowWidth) {
 		b.PosX = float64(g.WindowWidth - int32(b.Radius))
 		b.VelX = -b.VelX
 	}
+
 	// Top
 	if b.PosY-float64(b.Radius) < 0 {
 		b.PosY = 0 + float64(b.Radius)
 		b.VelY = -b.VelY
-	}
-	// Bottom
-	if b.PosY > float64(g.WindowHeight) {
+
+		// Bottom
+	} else if b.PosY > float64(g.WindowHeight) {
 		b.Held = true
 	}
 
@@ -126,9 +129,9 @@ func (b *Ball) BrickCollide(brick *Brick) {
 	}
 
 	// Collision response
-	radSqrt := math.Sqrt(dist)
-	normX := distX / radSqrt
-	normY := distY / radSqrt
+	distSqrt := math.Sqrt(dist)
+	normX := distX / distSqrt
+	normY := distY / distSqrt
 
 	// Reverse velocities accordingly
 	// Prevent buggy reversion by checking to see if
