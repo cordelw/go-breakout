@@ -30,13 +30,13 @@ func (b Ball) Draw(renderer *sdl.Renderer) {
 }
 
 func (g *Game) updateBall() {
-	b := &g.Ball
+	b := &g.ball
 
 	// Held by player before being released
 	// Follow player paddle
 	if b.Held {
-		b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
-		b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
+		b.PosY = float64(g.windowHeight-(g.windowHeight/8)) - float64(b.Radius+b.Radius/2)
+		b.PosX = g.paddle.PosX + float64(g.paddle.Width/2)
 		//b.PosX = float64(g.Mouse.PosX)
 		//b.PosY = float64(g.Mouse.PosY)
 		return
@@ -49,12 +49,12 @@ func (g *Game) updateBall() {
 
 	// Adjust velocity for different
 	// screen sizes
-	h := float64(g.WindowWidth) / 440
-	v := float64(g.WindowHeight) / 330
+	h := float64(g.windowWidth) / 440
+	v := float64(g.windowHeight) / 330
 
 	// Update position
-	b.PosX += b.VelX * h * g.Clock.DeltaTime
-	b.PosY += b.VelY * v * g.Clock.DeltaTime
+	b.PosX += b.VelX * h * g.clock.DeltaTime
+	b.PosY += b.VelY * v * g.clock.DeltaTime
 
 	// Bounds collisions
 	// Left
@@ -64,8 +64,8 @@ func (g *Game) updateBall() {
 		g.sfx["bounce"].Play(-1, 0)
 
 		// Right
-	} else if b.PosX+float64(b.Radius) > float64(g.WindowWidth) {
-		b.PosX = float64(g.WindowWidth - int32(b.Radius))
+	} else if b.PosX+float64(b.Radius) > float64(g.windowWidth) {
+		b.PosX = float64(g.windowWidth - int32(b.Radius))
 		b.VelX = -b.VelX
 		g.sfx["bounce"].Play(-1, 0)
 	}
@@ -77,7 +77,7 @@ func (g *Game) updateBall() {
 		g.sfx["bounce"].Play(-1, 0)
 
 		// Bottom
-	} else if b.PosY > float64(g.WindowHeight) {
+	} else if b.PosY > float64(g.windowHeight) {
 		g.ballCount -= 1
 		b.Held = true
 		g.sfx["miss"].Play(-1, 0)
@@ -86,13 +86,13 @@ func (g *Game) updateBall() {
 	// Player paddle collisions
 	// Check horizontal
 
-	if b.PosX >= g.Paddle.PosX && b.PosX <= g.Paddle.PosX+float64(g.Paddle.Width) {
+	if b.PosX >= g.paddle.PosX && b.PosX <= g.paddle.PosX+float64(g.paddle.Width) {
 		// Check vertical
-		if b.PosY+float64(b.Radius) > g.Paddle.PosY && b.PosY < g.Paddle.PosY {
-			b.PosY = g.Paddle.PosY - float64(b.Radius)
+		if b.PosY+float64(b.Radius) > g.paddle.PosY && b.PosY < g.paddle.PosY {
+			b.PosY = g.paddle.PosY - float64(b.Radius)
 			b.VelY = -b.VelY
 
-			dir := float64(g.LastMouse.PosX - g.Mouse.PosX)
+			dir := float64(g.lastMouse.PosX - g.mouse.PosX)
 			if dir != 0 {
 				b.VelX = -(math.Min(dir*10, b.Speed))
 			}

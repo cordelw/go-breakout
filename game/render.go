@@ -8,38 +8,38 @@ import (
 
 func (g *Game) Draw() {
 	// Clear draw buffer
-	g.Renderer.SetDrawColor(24, 24, 24, 255)
-	g.Renderer.Clear()
+	g.renderer.SetDrawColor(24, 24, 24, 255)
+	g.renderer.Clear()
 
 	// Draw Bricks
-	for _, b := range g.Bricks {
-		b.Draw(g.Renderer)
+	for _, b := range g.bricks {
+		b.Draw(g.renderer)
 	}
 
 	// Draw paddle and ball(s)
-	g.Paddle.Draw(g.Renderer)
-	g.Ball.Draw(g.Renderer)
+	g.paddle.Draw(g.renderer)
+	g.ball.Draw(g.renderer)
 
 	// Start game screen
-	if g.Stage == 0 {
+	if g.stage == 0 {
 		// Breakout text
-		tw := (g.WindowWidth / 3) * 2
-		th := (g.WindowHeight) / 8
+		tw := (g.windowWidth / 3) * 2
+		th := (g.windowHeight) / 8
 		dst := &sdl.Rect{
-			X: (g.WindowWidth / 2) - (tw / 2),
-			Y: (g.WindowHeight / 4) - (th / 2),
+			X: (g.windowWidth / 2) - (tw / 2),
+			Y: (g.windowHeight / 4) - (th / 2),
 			W: tw,
 			H: th,
 		}
-		g.Renderer.Copy(
+		g.renderer.Copy(
 			g.textures["breakout"],
 			nil,
 			dst,
 		)
 
 		// Start Brick
-		cbrick := g.Bricks[0]
-		g.Renderer.Copy(
+		cbrick := g.bricks[0]
+		g.renderer.Copy(
 			g.textures["start"],
 			nil,
 			&sdl.Rect{
@@ -52,25 +52,25 @@ func (g *Game) Draw() {
 	}
 
 	// Game over screen
-	if g.Stage == 999 {
+	if g.stage == 999 {
 		// Game over text in top quarter of screen
-		tw := (g.WindowWidth / 3) * 2
-		th := (g.WindowHeight) / 8
+		tw := (g.windowWidth / 3) * 2
+		th := (g.windowHeight) / 8
 		dst := &sdl.Rect{
-			X: (g.WindowWidth / 2) - (tw / 2),
-			Y: (g.WindowHeight / 4) - (th / 2),
+			X: (g.windowWidth / 2) - (tw / 2),
+			Y: (g.windowHeight / 4) - (th / 2),
 			W: tw,
 			H: th,
 		}
-		g.Renderer.Copy(
+		g.renderer.Copy(
 			g.textures["game over"],
 			nil,
 			dst,
 		)
 
 		// Restart on brick
-		cbrick := g.Bricks[0]
-		g.Renderer.Copy(
+		cbrick := g.bricks[0]
+		g.renderer.Copy(
 			g.textures["restart"],
 			nil,
 			&sdl.Rect{
@@ -83,16 +83,16 @@ func (g *Game) Draw() {
 	}
 
 	// Win screen
-	if g.Stage == 6 {
-		tw := (g.WindowWidth / 3) * 2
-		th := (g.WindowHeight) / 8
+	if g.stage == 6 {
+		tw := (g.windowWidth / 3) * 2
+		th := (g.windowHeight) / 8
 		dst := &sdl.Rect{
-			X: (g.WindowWidth / 2) - (tw / 2),
-			Y: (g.WindowHeight / 4) - (th / 2),
+			X: (g.windowWidth / 2) - (tw / 2),
+			Y: (g.windowHeight / 4) - (th / 2),
 			W: tw,
 			H: th,
 		}
-		g.Renderer.Copy(
+		g.renderer.Copy(
 			g.textures["congratulations"],
 			nil,
 			dst,
@@ -100,9 +100,9 @@ func (g *Game) Draw() {
 	}
 
 	// Points and ballcount display
-	if g.Stage != 0 {
-		tw := g.WindowHeight / 20
-		th := g.WindowHeight / 15
+	if g.stage != 0 {
+		tw := g.windowHeight / 20
+		th := g.windowHeight / 15
 		var textSurface *sdl.Surface
 
 		// Draw points
@@ -113,7 +113,7 @@ func (g *Game) Draw() {
 			W: tw * 6,
 			H: th,
 		}
-		g.Renderer.Copy(g.textures["score"], nil, pcdst)
+		g.renderer.Copy(g.textures["score"], nil, pcdst)
 
 		// count
 		pcstr := fmt.Sprint(g.points)
@@ -125,10 +125,10 @@ func (g *Game) Draw() {
 				B: 255,
 			},
 		)
-		pctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
+		pctext, _ := g.renderer.CreateTextureFromSurface(textSurface)
 		textSurface.Free()
 
-		g.Renderer.Copy(pctext, nil, &sdl.Rect{
+		g.renderer.Copy(pctext, nil, &sdl.Rect{
 			X: pcdst.W + tw,
 			Y: 0,
 			W: int32(len(pcstr)) * tw,
@@ -138,14 +138,14 @@ func (g *Game) Draw() {
 
 		// Draw balls
 		//
-		if g.Stage != 999 && g.Stage != 6 {
+		if g.stage != 999 && g.stage != 6 {
 			bcdst := &sdl.Rect{
 				X: 0,
 				Y: th,
 				W: tw * 6,
 				H: th,
 			}
-			g.Renderer.Copy(g.textures["balls"], nil, bcdst)
+			g.renderer.Copy(g.textures["balls"], nil, bcdst)
 
 			// count
 			bcstr := fmt.Sprint(g.ballCount)
@@ -157,10 +157,10 @@ func (g *Game) Draw() {
 					B: 255,
 				},
 			)
-			bctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
+			bctext, _ := g.renderer.CreateTextureFromSurface(textSurface)
 			textSurface.Free()
 
-			g.Renderer.Copy(bctext, nil, &sdl.Rect{
+			g.renderer.Copy(bctext, nil, &sdl.Rect{
 				X: bcdst.W + tw,
 				Y: th,
 				W: int32(len(bcstr)) * tw,
@@ -172,7 +172,7 @@ func (g *Game) Draw() {
 	}
 
 	// Present renderer
-	g.Renderer.Present()
+	g.renderer.Present()
 }
 
 func DrawCircle(renderer *sdl.Renderer, posX, posY, radius int) {

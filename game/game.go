@@ -9,34 +9,34 @@ import (
 )
 
 type Game struct {
-	WindowWidth  int32
-	WindowHeight int32
-	Window       *sdl.Window
-	Renderer     *sdl.Renderer
+	windowWidth  int32
+	windowHeight int32
+	window       *sdl.Window
+	renderer     *sdl.Renderer
 	font         *ttf.Font
 	textures     map[string]*sdl.Texture
 	sfx          map[string]*mix.Chunk
 	Active       bool
-	Mouse        Mouse
-	LastMouse    Mouse
-	Clock        Clock
-	Stage        int
-	Paddle       Paddle
+	mouse        Mouse
+	lastMouse    Mouse
+	clock        Clock
+	stage        int
+	paddle       Paddle
 	points       int
-	Ball         Ball
+	ball         Ball
 	ballCount    int
-	Bricks       []Brick
+	bricks       []Brick
 	brickCount   int
 }
 
 func (g *Game) Init(windowWidth, windowHeight int32) {
-	g.WindowWidth, g.WindowHeight = windowWidth, windowHeight
+	g.windowWidth, g.windowHeight = windowWidth, windowHeight
 
 	/* Initialize SDL and SDL subsystems */
 	var err error
 
 	// Init SDL
-	g.Window, err = sdl.CreateWindow(
+	g.window, err = sdl.CreateWindow(
 		"Breakout",
 		sdl.WINDOWPOS_CENTERED, sdl.WINDOWPOS_CENTERED,
 		windowWidth, windowHeight,
@@ -47,8 +47,8 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	}
 
 	// Create Renderer
-	g.Renderer, err = sdl.CreateRenderer(
-		g.Window, -1, sdl.RENDERER_ACCELERATED,
+	g.renderer, err = sdl.CreateRenderer(
+		g.window, -1, sdl.RENDERER_ACCELERATED,
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -69,15 +69,15 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 
 	/* Initialize Game Parameters */
 	// Game objects
-	g.Paddle.Init(float64(windowWidth), float64(windowHeight))
-	g.Ball.Init(windowHeight, g.Paddle.PosX)
-	g.Stage = 0
+	g.paddle.Init(float64(windowWidth), float64(windowHeight))
+	g.ball.Init(windowHeight, g.paddle.PosX)
+	g.stage = 0
 	g.InitBricks()
 	g.ballCount = 3
 	g.points = 0
 
 	// Clock
-	g.Clock.Init()
+	g.clock.Init()
 	g.Active = true
 }
 
@@ -112,7 +112,7 @@ func (g *Game) initTextures() {
 			B: 0,
 		},
 	)
-	g.textures["start"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["start"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// Score
@@ -124,7 +124,7 @@ func (g *Game) initTextures() {
 			B: 255,
 		},
 	)
-	g.textures["score"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["score"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// Balls
@@ -136,7 +136,7 @@ func (g *Game) initTextures() {
 			B: 255,
 		},
 	)
-	g.textures["balls"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["balls"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// Game over
@@ -148,7 +148,7 @@ func (g *Game) initTextures() {
 			B: 255,
 		},
 	)
-	g.textures["game over"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["game over"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// Restart
@@ -160,7 +160,7 @@ func (g *Game) initTextures() {
 			B: 0,
 		},
 	)
-	g.textures["restart"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["restart"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// BREAKOUT
@@ -172,7 +172,7 @@ func (g *Game) initTextures() {
 			B: 255,
 		},
 	)
-	g.textures["breakout"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["breakout"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 
 	// Congratulations
@@ -184,7 +184,7 @@ func (g *Game) initTextures() {
 			B: 255,
 		},
 	)
-	g.textures["congratulations"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	g.textures["congratulations"], _ = g.renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
 }
 
@@ -207,17 +207,17 @@ func (g *Game) Quit() {
 	g.deleteTextures()
 
 	// Window stuff
-	g.Renderer.Destroy()
-	g.Window.Destroy()
+	g.renderer.Destroy()
+	g.window.Destroy()
 	sdl.Quit()
 }
 
 func (g *Game) setStage(stage int) {
 	sdl.Delay(750)
-	g.Stage = stage
+	g.stage = stage
 	g.InitBricks()
 
-	g.Ball.Held = true
+	g.ball.Held = true
 	g.ballCount = 3
 
 	if stage == 1 {
@@ -233,11 +233,11 @@ func (g *Game) Update() {
 	g.updateBall()
 
 	bbc := 0
-	for i := range g.Bricks {
-		g.Ball.BrickCollide(&g.Bricks[i], &g.points, g.sfx)
+	for i := range g.bricks {
+		g.ball.BrickCollide(&g.bricks[i], &g.points, g.sfx)
 
 		// Count destroyed bricks
-		if g.Bricks[i].Destructable && g.Bricks[i].HP == 0 {
+		if g.bricks[i].Destructable && g.bricks[i].HP == 0 {
 			bbc += 1
 		}
 	}
@@ -250,20 +250,20 @@ func (g *Game) Update() {
 	// current brick count
 	/* These are below draw call so you see menu brick destroyed */
 	if bbc == g.brickCount {
-		switch g.Stage {
+		switch g.stage {
 		case 999:
 			g.setStage(1)
 		case 6:
 			break
 		default:
-			g.setStage(g.Stage + 1)
+			g.setStage(g.stage + 1)
 		}
 	}
 
-	if g.Stage != 6 && g.ballCount == 0 {
+	if g.stage != 6 && g.ballCount == 0 {
 		g.setStage(999)
 	}
 
 	// Update delta time
-	g.Clock.Tick()
+	g.clock.Tick()
 }
