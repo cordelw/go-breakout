@@ -82,6 +82,23 @@ func (g *Game) Draw() {
 		)
 	}
 
+	// Win screen
+	if g.Stage == 6 {
+		tw := (g.WindowWidth / 3) * 2
+		th := (g.WindowHeight) / 8
+		dst := &sdl.Rect{
+			X: (g.WindowWidth / 2) - (tw / 2),
+			Y: (g.WindowHeight / 4) - (th / 2),
+			W: tw,
+			H: th,
+		}
+		g.Renderer.Copy(
+			g.textures["congratulations"],
+			nil,
+			dst,
+		)
+	}
+
 	// Points and ballcount display
 	if g.Stage != 0 {
 		tw := g.WindowHeight / 20
@@ -121,34 +138,37 @@ func (g *Game) Draw() {
 
 		// Draw balls
 		//
-		bcdst := &sdl.Rect{
-			X: 0,
-			Y: th,
-			W: tw * 6,
-			H: th,
+		if g.Stage != 999 && g.Stage != 6 {
+			bcdst := &sdl.Rect{
+				X: 0,
+				Y: th,
+				W: tw * 6,
+				H: th,
+			}
+			g.Renderer.Copy(g.textures["balls"], nil, bcdst)
+
+			// count
+			bcstr := fmt.Sprint(g.ballCount)
+			textSurface, _ = g.font.RenderUTF8Solid(
+				bcstr,
+				sdl.Color{
+					R: 255,
+					G: 255,
+					B: 255,
+				},
+			)
+			bctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
+			textSurface.Free()
+
+			g.Renderer.Copy(bctext, nil, &sdl.Rect{
+				X: bcdst.W + tw,
+				Y: th,
+				W: int32(len(bcstr)) * tw,
+				H: th,
+			})
+			bctext.Destroy()
+
 		}
-		g.Renderer.Copy(g.textures["balls"], nil, bcdst)
-
-		// count
-		bcstr := fmt.Sprint(g.ballCount)
-		textSurface, _ = g.font.RenderUTF8Solid(
-			bcstr,
-			sdl.Color{
-				R: 255,
-				G: 255,
-				B: 255,
-			},
-		)
-		bctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
-		textSurface.Free()
-
-		g.Renderer.Copy(bctext, nil, &sdl.Rect{
-			X: bcdst.W + tw,
-			Y: th,
-			W: int32(len(bcstr)) * tw,
-			H: th,
-		})
-		bctext.Destroy()
 	}
 
 	// Present renderer

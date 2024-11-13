@@ -51,6 +51,8 @@ func (g *Game) InitBricks() {
 	g.Bricks = make([]Brick, 0)
 	g.brickCount = 0
 
+	ystart := 2 * (float64(g.WindowHeight) / 15)
+
 	switch g.Stage {
 	case 0: // Start Menu
 		w := float64(g.WindowWidth) / 4
@@ -84,14 +86,14 @@ func (g *Game) InitBricks() {
 
 	case 1: // First stage
 		// Single layer of bricks
-		Y := float64(g.WindowHeight / 3)
+		//Y := float64(g.WindowHeight / 3)
 		for l := 0; l < 2; l++ {
 			for i := 0; i < 11; i++ {
 				g.Bricks = append(g.Bricks, Brick{
 					Destructable: true,
 					HP:           1,
 					PosX:         brickWidth * float64(i),
-					PosY:         Y - (brickHeight * float64(l)),
+					PosY:         ystart + brickHeight*float64(l),
 					Width:        brickWidth,
 					Height:       brickHeight,
 				})
@@ -100,19 +102,140 @@ func (g *Game) InitBricks() {
 			}
 		}
 	case 2: // Second stage
-		Y := float64(g.WindowHeight / 3)
 		for l := 0; l < 3; l++ {
 			for i := 0; i < 11; i++ {
 				g.Bricks = append(g.Bricks, Brick{
 					Destructable: true,
-					HP:           1 + 1*l,
+					HP:           2 + 1 - l,
 					PosX:         brickWidth * float64(i),
-					PosY:         Y - (brickHeight * float64(l)),
+					PosY:         ystart + (brickHeight * float64(l)),
 					Width:        brickWidth,
 					Height:       brickHeight,
 				})
 
 				g.brickCount++
+			}
+		}
+
+	case 3: // Stage 3
+		for l := 0; l < 2; l++ { // top 2 layers
+			for i := 0; i < 11; i++ {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: true,
+					HP:           1 + 1 - l,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + (brickHeight*2)*float64(l),
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
+
+				g.brickCount++
+			}
+		}
+
+		// Unbreakable blocks
+
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: false,
+			HP:           -1,
+			PosX:         brickWidth * 2,
+			PosY:         ystart + brickHeight*4,
+			Width:        brickWidth,
+			Height:       brickHeight,
+		})
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: false,
+			HP:           -1,
+			PosX:         brickWidth * 4,
+			PosY:         ystart + brickHeight*4,
+			Width:        brickWidth,
+			Height:       brickHeight,
+		})
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: false,
+			HP:           -1,
+			PosX:         brickWidth * 6,
+			PosY:         ystart + brickHeight*4,
+			Width:        brickWidth,
+			Height:       brickHeight,
+		})
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: false,
+			HP:           -1,
+			PosX:         brickWidth * 8,
+			PosY:         ystart + brickHeight*4,
+			Width:        brickWidth,
+			Height:       brickHeight,
+		})
+	case 4: // Stage 4
+		for l := 0; l < 3; l++ {
+			for i := 0; i < 11; i++ {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: true,
+					HP:           2 + 1 - l,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + (brickHeight * float64(l)),
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
+
+				g.brickCount++
+			}
+		}
+		for l := 0; l < 3; l++ {
+			for i := 0; i < 11; i++ {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: true,
+					HP:           1 + l,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + ((brickHeight) * float64(l+4)),
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
+
+				g.brickCount++
+			}
+		}
+	case 5: // Stage 5
+		for l := 0; l < 2; l++ {
+			for i := 0; i < 11; i++ {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: true,
+					HP:           2 + 1 - l,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + (brickHeight * float64(l)),
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
+
+				g.brickCount++
+			}
+		}
+		for l := 0; l < 2; l++ {
+			for i := 0; i < 11; i++ {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: true,
+					HP:           2 + 1 - l,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + (brickHeight * float64(l+2)),
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
+
+				g.brickCount++
+			}
+		}
+
+		for i := 0; i < 11; i++ {
+			if i%2 == 0 {
+				g.Bricks = append(g.Bricks, Brick{
+					Destructable: false,
+					HP:           -1,
+					PosX:         brickWidth * float64(i),
+					PosY:         ystart + brickHeight*4,
+					Width:        brickWidth,
+					Height:       brickHeight,
+				})
 			}
 		}
 	}

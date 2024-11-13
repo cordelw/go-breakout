@@ -145,6 +145,18 @@ func (g *Game) initTextures() {
 	)
 	g.textures["breakout"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
 	textSurface.Free()
+
+	// Congratulations
+	textSurface, _ = g.font.RenderUTF8Solid(
+		"congratulations",
+		sdl.Color{
+			R: 255,
+			G: 255,
+			B: 255,
+		},
+	)
+	g.textures["congratulations"], _ = g.Renderer.CreateTextureFromSurface(textSurface)
+	textSurface.Free()
 }
 
 func (g *Game) deleteTextures() {
@@ -213,14 +225,17 @@ func (g *Game) Update() {
 	// current brick count
 	/* These are below draw call so you see menu brick destroyed */
 	if bbc == g.brickCount {
-		if g.Stage == 999 {
+		switch g.Stage {
+		case 999:
 			g.setStage(1)
-		} else {
+		case 6:
+			break
+		default:
 			g.setStage(g.Stage + 1)
 		}
 	}
 
-	if g.ballCount == 0 {
+	if g.Stage != 6 && g.ballCount == 0 {
 		g.setStage(999)
 	}
 

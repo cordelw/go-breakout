@@ -34,10 +34,10 @@ func (g *Game) updateBall() {
 	// Held by player before being released
 	// Follow player paddle
 	if b.Held {
-		b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
-		b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
-		//b.PosX = float64(g.Mouse.PosX)
-		//b.PosY = float64(g.Mouse.PosY)
+		//b.PosY = float64(g.WindowHeight-(g.WindowHeight/8)) - float64(b.Radius+b.Radius/2)
+		//b.PosX = g.Paddle.PosX + float64(g.Paddle.Width/2)
+		b.PosX = float64(g.Mouse.PosX)
+		b.PosY = float64(g.Mouse.PosY)
 		return
 	}
 
