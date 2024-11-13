@@ -221,7 +221,7 @@ func (g *Game) Update() {
 	g.Draw()
 
 	// Check to see if stage is complete
-	// Compare no of destroyable bricks to
+	// Compare no. of destroyable bricks to
 	// current brick count
 	/* These are below draw call so you see menu brick destroyed */
 	if bbc == g.brickCount {
