@@ -72,7 +72,7 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	g.paddle.Init(float64(windowWidth), float64(windowHeight))
 	g.ball.Init(windowHeight, g.paddle.PosX)
 	g.stage = 0
-	g.InitBricks()
+	g.initBricks()
 	g.ballCount = 3
 	g.points = 0
 
@@ -215,7 +215,7 @@ func (g *Game) Quit() {
 func (g *Game) setStage(stage int) {
 	sdl.Delay(750)
 	g.stage = stage
-	g.InitBricks()
+	g.initBricks()
 
 	g.ball.Held = true
 	g.ballCount = 3
@@ -227,7 +227,7 @@ func (g *Game) setStage(stage int) {
 
 func (g *Game) Update() {
 	// Update gamestate
-	g.HandleInput()
+	g.handleInput()
 
 	// Physics and collision checks
 	g.updateBall()
@@ -243,7 +243,7 @@ func (g *Game) Update() {
 	}
 
 	// Draw
-	g.Draw()
+	g.draw()
 
 	// Check to see if stage is complete
 	// Compare no. of destroyable bricks to

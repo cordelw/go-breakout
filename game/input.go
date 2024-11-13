@@ -12,7 +12,7 @@ type Mouse struct {
 	State      uint32
 }
 
-func (g *Game) HandleInput() {
+func (g *Game) handleInput() {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch et := event.(type) {
 

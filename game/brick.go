@@ -45,7 +45,7 @@ func (b *Brick) Draw(renderer *sdl.Renderer) {
 	})
 }
 
-func (g *Game) InitBricks() {
+func (g *Game) initBricks() {
 	brickWidth := float64(g.windowWidth / 11)
 	brickHeight := float64(g.windowHeight / 24)
 	g.bricks = make([]Brick, 0)

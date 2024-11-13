@@ -6,7 +6,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-func (g *Game) Draw() {
+func (g *Game) draw() {
 	// Clear draw buffer
 	g.renderer.SetDrawColor(24, 24, 24, 255)
 	g.renderer.Clear()
