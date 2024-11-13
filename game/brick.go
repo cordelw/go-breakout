@@ -52,7 +52,7 @@ func (g *Game) InitBricks() {
 	g.brickCount = 0
 
 	switch g.Stage {
-	case 0:
+	case 0: // Start Menu
 		w := float64(g.WindowWidth) / 4
 		h := float64(g.WindowHeight) / 8
 
@@ -66,6 +66,22 @@ func (g *Game) InitBricks() {
 		})
 
 		g.brickCount = 1
+
+	case 999: // Game over menu
+		w := float64(g.WindowWidth) / 4
+		h := float64(g.WindowHeight) / 8
+
+		g.Bricks = append(g.Bricks, Brick{
+			Destructable: true,
+			HP:           1,
+			PosX:         float64(g.WindowWidth/2) - (w / 2),
+			PosY:         float64(g.WindowHeight/2) - (h / 2),
+			Width:        w,
+			Height:       h,
+		})
+
+		g.brickCount = 1
+
 	case 1: // First stage
 		// Single layer of bricks
 		Y := float64(g.WindowHeight / 3)

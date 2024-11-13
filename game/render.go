@@ -1,6 +1,10 @@
 package game
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"fmt"
+
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 func (g *Game) Draw() {
 	// Clear draw buffer
@@ -16,8 +20,24 @@ func (g *Game) Draw() {
 	g.Paddle.Draw(g.Renderer)
 	g.Ball.Draw(g.Renderer)
 
-	// Render start text on stage 0
+	// Start game screen
 	if g.Stage == 0 {
+		// Breakout text
+		tw := (g.WindowWidth / 3) * 2
+		th := (g.WindowHeight) / 8
+		dst := &sdl.Rect{
+			X: (g.WindowWidth / 2) - (tw / 2),
+			Y: (g.WindowHeight / 4) - (th / 2),
+			W: tw,
+			H: th,
+		}
+		g.Renderer.Copy(
+			g.textures["breakout"],
+			nil,
+			dst,
+		)
+
+		// Start Brick
 		cbrick := g.Bricks[0]
 		g.Renderer.Copy(
 			g.textures["start"],
@@ -29,6 +49,106 @@ func (g *Game) Draw() {
 				H: int32(cbrick.Height),
 			},
 		)
+	}
+
+	// Game over screen
+	if g.Stage == 999 {
+		// Game over text in top quarter of screen
+		tw := (g.WindowWidth / 3) * 2
+		th := (g.WindowHeight) / 8
+		dst := &sdl.Rect{
+			X: (g.WindowWidth / 2) - (tw / 2),
+			Y: (g.WindowHeight / 4) - (th / 2),
+			W: tw,
+			H: th,
+		}
+		g.Renderer.Copy(
+			g.textures["game over"],
+			nil,
+			dst,
+		)
+
+		// Restart on brick
+		cbrick := g.Bricks[0]
+		g.Renderer.Copy(
+			g.textures["restart"],
+			nil,
+			&sdl.Rect{
+				X: int32(cbrick.PosX),
+				Y: int32(cbrick.PosY),
+				W: int32(cbrick.Width),
+				H: int32(cbrick.Height),
+			},
+		)
+	}
+
+	// Points and ballcount display
+	if g.Stage != 0 {
+		tw := g.WindowHeight / 20
+		th := g.WindowHeight / 15
+		var textSurface *sdl.Surface
+
+		// Draw points
+		//
+		pcdst := &sdl.Rect{
+			X: 0,
+			Y: 0,
+			W: tw * 6,
+			H: th,
+		}
+		g.Renderer.Copy(g.textures["score"], nil, pcdst)
+
+		// count
+		pcstr := fmt.Sprint(g.points)
+		textSurface, _ = g.font.RenderUTF8Solid(
+			pcstr,
+			sdl.Color{
+				R: 255,
+				G: 255,
+				B: 255,
+			},
+		)
+		pctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
+		textSurface.Free()
+
+		g.Renderer.Copy(pctext, nil, &sdl.Rect{
+			X: pcdst.W + tw,
+			Y: 0,
+			W: int32(len(pcstr)) * tw,
+			H: th,
+		})
+		pctext.Destroy()
+
+		// Draw balls
+		//
+		bcdst := &sdl.Rect{
+			X: 0,
+			Y: th,
+			W: tw * 6,
+			H: th,
+		}
+		g.Renderer.Copy(g.textures["balls"], nil, bcdst)
+
+		// count
+		bcstr := fmt.Sprint(g.ballCount)
+		textSurface, _ = g.font.RenderUTF8Solid(
+			bcstr,
+			sdl.Color{
+				R: 255,
+				G: 255,
+				B: 255,
+			},
+		)
+		bctext, _ := g.Renderer.CreateTextureFromSurface(textSurface)
+		textSurface.Free()
+
+		g.Renderer.Copy(bctext, nil, &sdl.Rect{
+			X: bcdst.W + tw,
+			Y: th,
+			W: int32(len(bcstr)) * tw,
+			H: th,
+		})
+		bctext.Destroy()
 	}
 
 	// Present renderer

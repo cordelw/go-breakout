@@ -74,6 +74,7 @@ func (g *Game) updateBall() {
 
 		// Bottom
 	} else if b.PosY > float64(g.WindowHeight) {
+		g.ballCount -= 1
 		b.Held = true
 	}
 
@@ -94,7 +95,7 @@ func (g *Game) updateBall() {
 	}
 }
 
-func (b *Ball) BrickCollide(brick *Brick) {
+func (b *Ball) BrickCollide(brick *Brick, score *int) {
 	/*
 		Clamp function and sh:
 		https://www.youtube.com/watch?v=_xj8FyG-aac
@@ -156,6 +157,7 @@ func (b *Ball) BrickCollide(brick *Brick) {
 	// Damage brick if destructable
 	if brick.Destructable {
 		brick.HP -= 1
+		*score += 100
 	}
 }
 
