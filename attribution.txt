@@ -1,0 +1,4 @@
+break.wav : 8 Bit Slam by Jofae -- https://freesound.org/s/361636/ -- License: Creative Commons 0
+bounce.wav : 8-bit rebound-1 by KSAplay -- https://freesound.org/s/758955/ -- License: Creative Commons 0
+
+font.ttf : Pixel Emulator -- https://www.fontspace.com/pixel-emulator-font-f21507
