@@ -3,6 +3,7 @@ package game
 import (
 	"math"
 
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -60,22 +61,26 @@ func (g *Game) updateBall() {
 	if b.PosX-float64(b.Radius) < 0 {
 		b.PosX = 0 + float64(b.Radius)
 		b.VelX = -b.VelX
+		g.sfx["bounce"].Play(-1, 0)
 
 		// Right
 	} else if b.PosX+float64(b.Radius) > float64(g.WindowWidth) {
 		b.PosX = float64(g.WindowWidth - int32(b.Radius))
 		b.VelX = -b.VelX
+		g.sfx["bounce"].Play(-1, 0)
 	}
 
 	// Top
 	if b.PosY-float64(b.Radius) < 0 {
 		b.PosY = 0 + float64(b.Radius)
 		b.VelY = -b.VelY
+		g.sfx["bounce"].Play(-1, 0)
 
 		// Bottom
 	} else if b.PosY > float64(g.WindowHeight) {
 		g.ballCount -= 1
 		b.Held = true
+		g.sfx["miss"].Play(-1, 0)
 	}
 
 	// Player paddle collisions
@@ -91,11 +96,13 @@ func (g *Game) updateBall() {
 			if dir != 0 {
 				b.VelX = -(math.Min(dir*10, b.Speed))
 			}
+
+			g.sfx["bounce"].Play(-1, 0)
 		}
 	}
 }
 
-func (b *Ball) BrickCollide(brick *Brick, score *int) {
+func (b *Ball) BrickCollide(brick *Brick, score *int, sfx map[string]*mix.Chunk) {
 	/*
 		Clamp function and sh:
 		https://www.youtube.com/watch?v=_xj8FyG-aac
@@ -158,6 +165,14 @@ func (b *Ball) BrickCollide(brick *Brick, score *int) {
 	if brick.Destructable {
 		brick.HP -= 1
 		*score += 100
+
+		if brick.HP == 0 {
+			sfx["break"].Play(-1, 0)
+		} else {
+			sfx["bounce"].Play(-1, 0)
+		}
+	} else {
+		sfx["bounce"].Play(-1, 0)
 	}
 }
 

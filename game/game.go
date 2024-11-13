@@ -3,6 +3,7 @@ package game
 import (
 	"log"
 
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
@@ -14,6 +15,7 @@ type Game struct {
 	Renderer     *sdl.Renderer
 	font         *ttf.Font
 	textures     map[string]*sdl.Texture
+	sfx          map[string]*mix.Chunk
 	Active       bool
 	Mouse        Mouse
 	LastMouse    Mouse
@@ -52,9 +54,17 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 		log.Fatal(err)
 	}
 
+	// Initialize SDL Mixer
+	err = mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 1, 2048)
+	if err != nil {
+		log.Fatal(err)
+	}
+	mix.Volume(-1, 96)
+	g.initSfx()
+
 	// Initialize font renderer
 	ttf.Init()
-	g.font, _ = ttf.OpenFont("font.ttf", 120)
+	g.font, _ = ttf.OpenFont("res/font.ttf", 120)
 	g.initTextures()
 
 	/* Initialize Game Parameters */
@@ -69,6 +79,25 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	// Clock
 	g.Clock.Init()
 	g.Active = true
+}
+
+func (g *Game) initSfx() {
+	g.sfx = make(map[string]*mix.Chunk)
+
+	// Brick break sfx
+	g.sfx["break"], _ = mix.LoadWAV("res/break.wav")
+
+	// Wall bounce
+	g.sfx["bounce"], _ = mix.LoadWAV("res/bounce.wav")
+
+	// Paddle miss
+	g.sfx["miss"], _ = mix.LoadWAV("res/miss.wav")
+}
+
+func (g *Game) deleteSfx() {
+	for key := range g.sfx {
+		g.sfx[key].Free()
+	}
 }
 
 func (g *Game) initTextures() {
@@ -165,15 +194,11 @@ func (g *Game) deleteTextures() {
 	}
 }
 
-func (g *Game) SetWindowSize(windowWidth, windowHeight int32) {
-	g.Window.SetSize(
-		windowWidth, windowHeight,
-	)
-
-	g.Paddle.Init(float64(windowWidth), float64(windowHeight))
-}
-
 func (g *Game) Quit() {
+	// SDl Mixer
+	g.deleteSfx()
+	mix.CloseAudio()
+
 	// Font renderer
 	g.font.Close()
 	ttf.Quit()
@@ -209,7 +234,7 @@ func (g *Game) Update() {
 
 	bbc := 0
 	for i := range g.Bricks {
-		g.Ball.BrickCollide(&g.Bricks[i], &g.points)
+		g.Ball.BrickCollide(&g.Bricks[i], &g.points, g.sfx)
 
 		// Count destroyed bricks
 		if g.Bricks[i].Destructable && g.Bricks[i].HP == 0 {
