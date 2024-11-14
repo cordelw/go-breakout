@@ -71,7 +71,7 @@ func (g *Game) Init(windowWidth, windowHeight int32) {
 	// Game objects
 	g.paddle.Init(float64(windowWidth), float64(windowHeight))
 	g.ball.Init(windowHeight, g.paddle.PosX)
-	g.stage = 5
+	g.stage = 0
 	g.initBricks()
 	g.ballCount = 3
 	g.points = 0
