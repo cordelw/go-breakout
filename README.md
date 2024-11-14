@@ -1,5 +1,5 @@
 # go-breakout
-Kind of bad breakout clone written in golang using SDL2.
+Breakout clone written in golang using SDL2.
 
 ![gameplay capture](captures/gameplay.png)
 

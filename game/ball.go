@@ -2,6 +2,7 @@ package game
 
 import (
 	"math"
+	"math/rand"
 
 	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
@@ -19,7 +20,7 @@ func (b *Ball) Init(windowHeight int32, posX float64) {
 	b.Radius = int(windowHeight) / 48
 	b.PosY = float64(windowHeight-(windowHeight/8)) - float64(b.Radius+b.Radius/2)
 	b.PosX = posX
-	b.Speed = 0.15
+	b.Speed = 0.3
 
 	b.Held = true
 }
@@ -45,6 +46,15 @@ func (g *Game) updateBall() {
 	// Fix Horizontal Velocity
 	if b.VelX > b.Speed {
 		b.VelX = b.Speed
+	} else if b.VelX < -b.Speed {
+		b.VelX = -b.Speed
+	}
+
+	// Fix Vertical Velocity
+	if b.VelY > b.Speed/2 {
+		b.VelY = b.Speed / 2
+	} else if b.VelY < -b.Speed/2 {
+		b.VelY = -b.Speed / 2
 	}
 
 	// Adjust velocity for different
@@ -89,17 +99,41 @@ func (g *Game) updateBall() {
 	if b.PosX >= g.paddle.PosX && b.PosX <= g.paddle.PosX+float64(g.paddle.Width) {
 		// Check vertical
 		if b.PosY+float64(b.Radius) > g.paddle.PosY && b.PosY < g.paddle.PosY {
+			// Reposition Ball and reverse Y direction
 			b.PosY = g.paddle.PosY - float64(b.Radius)
 			b.VelY = -b.VelY
 
-			dir := float64(g.lastMouse.PosX - g.mouse.PosX)
-			if dir != 0 {
-				b.VelX = -(math.Min(dir*10, b.Speed))
+			// Determine which direction the paddle is
+			// moving defined as -1, 0, or 1
+			var dirNorm float64
+			mDiff := g.mouse.PosX - g.lastMouse.PosX
+			if mDiff > 0 {
+				dirNorm = 1
+			} else if mDiff < 0 {
+				dirNorm = -1
+			} else {
+				dirNorm = 0
 			}
+
+			// Set velocity to random variance between
+			// 0.1 and b.Speed
+			var newVelX float64
+			newVelX = randFloatN(10, int(b.Speed*100))
+
+			// Multiplied by the direction if not 0
+			if dirNorm != 0 {
+				newVelX *= dirNorm
+			}
+
+			b.VelX = newVelX
 
 			g.sfx["bounce"].Play(-1, 0)
 		}
 	}
+}
+
+func randFloatN(min, max int) float64 {
+	return float64(rand.Intn(max-min)+min) / 100
 }
 
 func (b *Ball) BrickCollide(brick *Brick, score *int, sfx map[string]*mix.Chunk) {

@@ -33,20 +33,22 @@ func (g *Game) handleInput() {
 
 				dir := float64(et.X - g.mouse.PosX)
 				if dir != 0 {
-					g.ball.VelX = -math.Min(dir*10, g.ball.Speed)
+					g.ball.VelX = -math.Min(dir*10, g.ball.Speed/2)
 				} else {
 					if rand.Float32() < 0.5 {
-						g.ball.VelX = -g.ball.Speed
+						g.ball.VelX = -g.ball.Speed / 2
 					} else {
-						g.ball.VelX = g.ball.Speed
+						g.ball.VelX = g.ball.Speed / 2
 					}
 				}
 			}
 
-		case *sdl.KeyboardEvent:
-			if et.Keysym.Scancode == sdl.SCANCODE_SPACE {
-				g.ball.Held = true
-			}
+			/*
+				case *sdl.KeyboardEvent:
+					if et.Keysym.Scancode == sdl.SCANCODE_SPACE {
+						g.ball.Held = true
+					}
+			*/
 		}
 
 		// Update Mouse trackage

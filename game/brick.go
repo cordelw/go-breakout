@@ -146,22 +146,6 @@ func (g *Game) initBricks() {
 		g.bricks = append(g.bricks, Brick{
 			Destructable: false,
 			HP:           -1,
-			PosX:         brickWidth * 4,
-			PosY:         ystart + brickHeight*4,
-			Width:        brickWidth,
-			Height:       brickHeight,
-		})
-		g.bricks = append(g.bricks, Brick{
-			Destructable: false,
-			HP:           -1,
-			PosX:         brickWidth * 6,
-			PosY:         ystart + brickHeight*4,
-			Width:        brickWidth,
-			Height:       brickHeight,
-		})
-		g.bricks = append(g.bricks, Brick{
-			Destructable: false,
-			HP:           -1,
 			PosX:         brickWidth * 8,
 			PosY:         ystart + brickHeight*4,
 			Width:        brickWidth,
@@ -199,9 +183,15 @@ func (g *Game) initBricks() {
 	case 5: // Stage 5
 		for l := 0; l < 2; l++ {
 			for i := 0; i < 11; i++ {
+				var hp int
+				if i%2 == 0 {
+					hp = 1
+				} else {
+					hp = 2 + 1 - l
+				}
 				g.bricks = append(g.bricks, Brick{
 					Destructable: true,
-					HP:           2 + 1 - l,
+					HP:           hp,
 					PosX:         brickWidth * float64(i),
 					PosY:         ystart + (brickHeight * float64(l)),
 					Width:        brickWidth,
@@ -213,9 +203,15 @@ func (g *Game) initBricks() {
 		}
 		for l := 0; l < 2; l++ {
 			for i := 0; i < 11; i++ {
+				var hp int
+				if i%2 == 0 {
+					hp = 1
+				} else {
+					hp = 2 + 1 - l
+				}
 				g.bricks = append(g.bricks, Brick{
 					Destructable: true,
-					HP:           2 + 1 - l,
+					HP:           hp,
 					PosX:         brickWidth * float64(i),
 					PosY:         ystart + (brickHeight * float64(l+2)),
 					Width:        brickWidth,
@@ -227,7 +223,7 @@ func (g *Game) initBricks() {
 		}
 
 		for i := 0; i < 11; i++ {
-			if i%2 == 0 {
+			if i == 0 || i == 4 || i == 5 || i == 6 || i == 10 {
 				g.bricks = append(g.bricks, Brick{
 					Destructable: false,
 					HP:           -1,
